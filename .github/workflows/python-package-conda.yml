@@ -1,4 +1,4 @@
-name: Attempt installation
+name: Attempt installation and lint
 
 on: [pull_request]
 
