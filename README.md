@@ -9,7 +9,7 @@ conda (ie. miniconda0), cuda (for Tensorflow normal vector computation)
 While in repository directory:
 
 ```
-conda env create conda_env.yml
+conda env create -f conda_env.yml
 conda activate newestfenics
 pip install git+https://github.com/g-peery/sanity_research_utils.git git+https://github.com/g-peery/moola.git
 pip install -e .
