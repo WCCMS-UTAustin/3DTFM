@@ -1,4 +1,4 @@
-name: Attempt installation and linting
+name: Attempt installation and verify help messages work
 
 on: [pull_request]
 
@@ -25,11 +25,13 @@ jobs:
       run: |
         pip install git+https://github.com/g-peery/sanity_research_utils.git git+https://github.com/g-peery/moola.git
         pip install -e .
-    - name: Lint with flake8
+    - name: Test scripts
       run: |
-        conda install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        forward --help
+        inverse --help
+        downsample_mesh --help
+        get_u --help
+        get_kinematics_mesh --help
+        get_veh --help
+        get_displacement_from_gpr --help
     
