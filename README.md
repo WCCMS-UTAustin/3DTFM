@@ -10,7 +10,8 @@ While in repository directory:
 
 ```
 conda env create conda_env.yml
-pip install git+https://github.com/g-peery/sanity_research_utils.git
+conda activate newestfenics
+pip install git+https://github.com/g-peery/sanity_research_utils.git git+https://github.com/g-peery/moola.git
 pip install -e .
 ```
 
