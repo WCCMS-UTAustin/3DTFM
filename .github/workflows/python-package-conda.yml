@@ -7,22 +7,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 5
+      fail-fast: false
+    defaults:
+      run:
+        shell: bash -el {0}
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.9.18
-      uses: actions/setup-python@v3
+    - name: Set up Anaconda
+      uses: conda-incubator/setup-miniconda@v3
       with:
-        python-version: '3.9.18'
-    - name: Add conda to system path, init
+        activate-environment: newestfenics
+        environment-file: conda_env_no_cuda.yml
+        python-version: 3.9.18
+        auto-activate-base: false
+    - name: Install other dependencies
       run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
-        conda init
-    - name: Install dependencies
-      run: |
-        conda env create -f conda_env_no_cuda.yml
-        conda activate newestfenics
         pip install git+https://github.com/g-peery/sanity_research_utils.git git+https://github.com/g-peery/moola.git
         pip install -e .
     - name: Lint with flake8
