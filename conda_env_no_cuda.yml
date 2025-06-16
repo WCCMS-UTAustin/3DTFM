@@ -369,7 +369,6 @@ dependencies:
   - six=1.16.0=pyhd3eb1b0_1
   - slepc=3.20.1=real_hac23e11_100
   - slepc4py=3.20.1=real_hab767b8_100
-#  - snappy=1.2.0=hdb0a2a9_1
   - sniffio=1.3.0=py39h06a4308_0
   - soupsieve=2.5=py39h06a4308_0
   - sqlite=3.41.2=h5eee18b_0
@@ -382,9 +381,6 @@ dependencies:
   - tbb=2021.8.0=hdb19cb5_0
   - tensorboard=2.16.2=pyhd8ed1ab_0
   - tensorboard-data-server=0.7.0=py39h52d8a92_0
-  - tensorflow=2.16.1=cuda120py39hb3dc16c_0
-  - tensorflow-base=2.16.1=cuda120py39h51c78e8_0
-  - tensorflow-estimator=2.16.1=cuda120py39h225b957_0
   - termcolor=2.1.0=py39h06a4308_0
   - terminado=0.17.1=py39h06a4308_0
   - threadpoolctl=3.5.0=py39h2f386ee_0
