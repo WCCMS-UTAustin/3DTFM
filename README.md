@@ -26,6 +26,7 @@ In any case, afterwards:
 
 ```
 conda activate newestfenics
+conda install -c bioconda tbb=2020.2
 pip install git+https://github.com/g-peery/sanity_research_utils.git git+https://github.com/g-peery/moola.git
 pip install -e .
 ```
