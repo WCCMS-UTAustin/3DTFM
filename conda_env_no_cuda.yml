@@ -378,8 +378,7 @@ dependencies:
   - superlu_dist=7.2.0=h25dcc4a_0
   - sympy=1.12=py39h06a4308_0
   - sysroot_linux-64=2.17=h57e8cba_10
-#- tbb=2021.8.0=hdb19cb5_0
-  - tbb=2020.2=hff7bd54_0
+  - tbb=2021.8.0=hdb19cb5_0
   - tensorboard=2.16.2=pyhd8ed1ab_0
   - tensorboard-data-server=0.7.0=py39h52d8a92_0
   - termcolor=2.1.0=py39h06a4308_0
