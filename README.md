@@ -1,6 +1,6 @@
 # 3D TFM - Inverse Model for Heterogeneous Hydrogel Modulus
 
-![demonstration](/images/hMVIC - ECM and u - Black Background.png)
+![demonstration](/images/hMVIC%20-%20ECM%20and%20u%20-%20Black%20Background.png)
 
 A Python FEniCS implementation of our sophisticated approach for inverse modeling of highly spatially-varying modulus in 3D Traction Force Microscopy.
 
