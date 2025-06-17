@@ -1,4 +1,4 @@
-name: Attempt installation and lint
+name: Attempt installation and verify help messages work
 
 on: [pull_request]
 
@@ -7,28 +7,31 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 5
+      fail-fast: false
+    defaults:
+      run:
+        shell: bash -el {0}
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.9.18
-      uses: actions/setup-python@v3
+    - name: Set up Anaconda
+      uses: conda-incubator/setup-miniconda@v3
       with:
-        python-version: '3.9.18'
-    - name: Add conda to system path
+        activate-environment: newestfenics
+        environment-file: conda_env_no_cuda.yml
+        python-version: 3.9.18
+        auto-activate-base: false
+    - name: Install other dependencies
       run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
-    - name: Install dependencies
-      run: |
-        conda env create -f conda_env.yml
-        conda activate newestfenics
+        conda install -c bioconda tbb=2020.2
         pip install git+https://github.com/g-peery/sanity_research_utils.git git+https://github.com/g-peery/moola.git
         pip install -e .
-    - name: Lint with flake8
+    - name: Test scripts
       run: |
-        conda install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        forward --help
+        inverse --help
+        downsample_mesh --help
+        get_u --help
+        get_kinematics_mesh --help
+        get_veh --help
     
