@@ -33,5 +33,4 @@ jobs:
         get_u --help
         get_kinematics_mesh --help
         get_veh --help
-        get_displacement_from_gpr --help
     
