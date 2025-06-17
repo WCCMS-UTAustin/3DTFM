@@ -19,27 +19,36 @@ def get_veh(cell_data_dir, u_exp_file, directory, cutoff=0.5):
 
 
 def get_veh_main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Obtain a mesh indicating which cells are counted"
+        " as being within the event horizon for visualization."
+    )
     parser.add_argument(
         "-c",
         type=str,
-        metavar="CELL_DATA"
+        metavar="CELL_DATA",
+        help="directory containing gel geometry"
     )
     parser.add_argument(
         "-i",
         type=str,
-        metavar="INPUT_FULL_SHAPE"
+        metavar="INPUT_FULL_SHAPE",
+        help="full-shape 1st order Lagrange .xdmf file with "
+        "displacements 'u'"
     )
     parser.add_argument(
         "-o",
         type=str,
-        metavar="OUTPUT_DIR"
+        metavar="OUTPUT_DIR",
+        help="result will be saved as "
+        "OUTPUT_DIR/u_regions_{THRESHOLD}.pvd and supporting files"
     )
     parser.add_argument(
         "-t",
         type=float,
         metavar="THRESHOLD",
-        default=0.5
+        default=0.38,
+        help="threshold by which VEH is determined in microns"
     )
     args = parser.parse_args()
 

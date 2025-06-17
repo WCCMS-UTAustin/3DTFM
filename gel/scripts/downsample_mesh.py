@@ -26,22 +26,32 @@ def downsample_mesh(num_faces,filename,outputname):
 
 
 def downsample_mesh_main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Interface to pymeshlab quadratic edge collapse for"
+        " FEniCS environment usage"
+    )
     parser.add_argument(
         "-d",
         type=str,
-        metavar="WORKING_DIR"
+        metavar="WORKING_DIR",
+        help="directory with input CytoD.stl and for output "
+        "CytoD_downsampled.stl"
     )
     parser.add_argument(
         "-n",
-        "--num-reduced-vertices",
+        "--num-reduced-faces",
         type=int,
-        metavar="NUM_REDUCED_VERTICES",
-        default=1100
+        metavar="NUM_REDUCED_FACES",
+        default=1100,
+        help="target number of triangular faces"
     )
     args = parser.parse_args()
 
-    downsample_mesh(args.num_reduced_vertices, os.path.join(args.d, "CytoD.stl"), os.path.join(args.d, "CytoD_downsampled.stl"))
+    downsample_mesh(
+        args.num_reduced_faces,
+        os.path.join(args.d, "CytoD.stl"),
+        os.path.join(args.d, "CytoD_downsampled.stl")
+    )
 
 
 if __name__=="__main__":

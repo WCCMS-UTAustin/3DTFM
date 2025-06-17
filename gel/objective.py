@@ -290,41 +290,48 @@ def add_objective_arguments(parser):
         "-g",
         type=float,
         metavar="GAMMA",
-        default=0.3
+        default=0.3,
+        help="regularization parameter for this stage"
     )
     parser.add_argument(
         "--u-weight",
         type=str,
         metavar="WEIGHT_FILE",
-        default=None
+        default=None,
+        help="filename with spatially-varying weight for matching term"
     )
     parser.add_argument(
         "--apply-u-weight-to-reg",
-        action="store_true"
+        action="store_true",
+        help="applies the weight to the regularization term as well"
     )
     parser.add_argument(
         "--ot",
         metavar="OBJECTIVE_TYPE",
         type=str,
-        default="u_metric"
+        default="u_metric",
+        help="form of the matching term"
     )
     parser.add_argument(
         "--rt",
         metavar="REGULARIZATION_TYPE",
         type=str,
-        default="tikhonov"
+        default="tikhonov",
+        help="form of the regularization term"
     )
     parser.add_argument(
         "--od",
         metavar="OBJECTIVE_DOMAIN",
         type=str,
-        default="exclude_undetectable0.38"
+        default="exclude_undetectable0.38",
+        help="domain of integral in matching term"
     )
     parser.add_argument(
         "--rd",
         metavar="REGULARIZATION_DOMAIN",
         type=str,
-        default="entire_gel"
+        default="entire_gel",
+        help="domain of integral in regularization term"
     )
 
 

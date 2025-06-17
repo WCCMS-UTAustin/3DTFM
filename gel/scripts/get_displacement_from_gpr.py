@@ -38,7 +38,10 @@ def get_predicted_u(gpr_path, vertices):
 
 
 def get_u_from_gpr_main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Evaluate GPR model at provided vertices, for use "
+        "in FM-Track environment"
+    )
     parser.add_argument(
         "-v",
         "--vertices-file",

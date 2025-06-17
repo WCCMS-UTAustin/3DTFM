@@ -36,7 +36,7 @@ def get_exp_u_xdmf(
     )
     conda_env = os.path.join(
         os.path.dirname(os.environ["CONDA_PREFIX"]),
-        "scikit"
+        "fmtrack"
     )
     script_cmdline = (
         f"conda run --no-capture-output -p {conda_env} {script_path}"
@@ -72,22 +72,33 @@ def get_exp_u_xdmf(
 
 
 def get_u_main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Interface for cross-conda-environment "
+        "communication between newestfenics and fmtrack in order to "
+        "create a full-shape .xmdf 1st order Lagrange representation "
+        "of experimental displacents by means of interpolating the GPR "
+        "model. This component is to be run in the newestfenics "
+        "environment."
+    )
     parser.add_argument(
         "-c",
         type=str,
-        metavar="CELL_DATA_DIR"
+        metavar="CELL_DATA_DIR",
+        help="directory containing gel geometry"
     )
     parser.add_argument(
         "-g",
         type=str,
-        metavar="GPR_DIR"
+        metavar="GPR_DIR",
+        help="directory with GPR model files, i.e. gp_U_cleaned.sav etc."
     )
     parser.add_argument(
         "-o",
         type=str,
         metavar="OUT_FILE",
-        default=None
+        default=None,
+        help="output full-shape 1st order Lagrange .xdmf file with "
+        "displacement 'u'"
     )
     args = parser.parse_args()
 

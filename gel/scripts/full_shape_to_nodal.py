@@ -42,21 +42,27 @@ def main(cell_data, input_full_shape, output_nodal):
 
 
 def get_kinematics_mesh():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Convert a full-shape .xdmf file with displacements"
+        " to a nodal .xdmf file for both visualization and computing J"
+    )
     parser.add_argument(
         "-c",
         type=str,
-        metavar="CELL_DATA"
+        metavar="CELL_DATA",
+        help="directory containing gel geometry"
     )
     parser.add_argument(
         "-i",
         type=str,
-        metavar="INPUT_FULL_SHAPE"
+        metavar="INPUT_FULL_SHAPE",
+        help="full-shape 1st order Lagrange .xdmf with displacements 'u'"
     )
     parser.add_argument(
         "-o",
         type=str,
-        metavar="OUTPUT_NODAL"
+        metavar="OUTPUT_NODAL",
+        help="output .xdmf file with kinematic quantities like J"
     )
     args = parser.parse_args()
 

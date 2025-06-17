@@ -474,7 +474,10 @@ def gel_inverse(
 
 
 def inverse():
-    parser = get_common_parser()
+    parser = get_common_parser(
+        description="One stage of the inverse model to determine modulus from "
+        "displacements"
+    )
 
     add_objective_arguments(parser)
 
@@ -482,47 +485,55 @@ def inverse():
         "-r",
         type=str,
         metavar="RESULTS_DIR",
-        default="results"
+        default="results",
+        help="superdirectory in which all results for given target u are stored"
     )
     parser.add_argument(
         "-t",
         type=str,
         metavar="TARGET_U_XDMF",
-        default=None
+        default=None,
+        help="filename with full-shape representation of target displacements"
     )
     parser.add_argument(
         "-a",
         type=float,
         metavar="TOL",
-        default=1e-8
+        default=1e-8,
+        help="tolerance for inverse model"
     )
     parser.add_argument(
         "-d",
         "--debug",
-        action="store_true"
+        action="store_true",
+        help="produces output of pyadjoint tree and performs Taylor test"
     )
     parser.add_argument(
         "-m",
         type=int,
         metavar="MAX_ITER",
-        default=250
+        default=250,
+        help="maximum L-BFGS iterations"
     )
     parser.add_argument(
         "-i",
         type=str,
-        metavar="ALPHA_INIT_STRAT",
-        default="zero"
+        metavar="INIT_STRAT",
+        default="zero",
+        help="what to initialize the modulus representation, i.e. beta, to"
     )
     parser.add_argument(
         "--no-restrict-ctl-dofs-to-veh",
-        action="store_true"
+        action="store_true",
+        help="solve for the modulus everywhere in the domain instead"
     )
     parser.add_argument(
         "--opt-backend",
         type=str,
         metavar="BACKEND",
         choices=["scipy", "moola"],
-        default="moola"
+        default="moola",
+        help="scipy: bounded, vector repr.; moola: unbounded, L2 repr."
     )
 
     args = parser.parse_args()

@@ -196,35 +196,45 @@ def output_single_forward_result(
 
 
 def forward():
-    parser = get_common_parser()
+    parser = get_common_parser(
+        description="Run the forward model for ground-truth"
+        " simulations of test problems"
+    )
 
     parser.add_argument(
         "-r",
         metavar="RESULTS_DIR",
-        default="forward"
+        default="forward",
+        help="superdirectory in which all solutions are saved"
     )
     parser.add_argument(
         "--tola",
         type=float,
         metavar="ABS_TOL",
-        default=1e-10
+        default=1e-10,
+        help="Newton-Rasphon absolute residual tolerance"
     )
     parser.add_argument(
         "--tolr",
         type=float,
         metavar="REL_TOL",
-        default=1e-9
+        default=1e-9,
+        help="Newton-Rasphon relative residual tolerance"
     )
     parser.add_argument(
         "-a",
         metavar="MOD_REPR",
-        default="zero"
+        default="zero",
+        help="the modulus field to use"
     )
     parser.add_argument(
         "-t",
         type=str,
         metavar="TRACTION",
-        default=None
+        default=None,
+        help="full-shape .xdmf file with 1st order Lagrange reference tractions"
+        " 'T' over the whole gel domain, note that values outside cell surface "
+        "are ignored"
     )
     args = parser.parse_args()
 

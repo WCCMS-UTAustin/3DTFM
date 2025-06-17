@@ -21,55 +21,66 @@ def project_tensor(geo, tensor):
     return projected_tensor
 
 
-def get_common_parser():
-    parser = argparse.ArgumentParser()
+def get_common_parser(*args, **kwargs):
+    if "formatter_class" not in kwargs:
+        kwargs["formatter_class"] = argparse.ArgumentDefaultsHelpFormatter
+
+    parser = argparse.ArgumentParser(*args, **kwargs)
 
     parser.add_argument(
         "-c",
         metavar="CELL_DATA_DIR",
-        default="cell_data"
+        default="cell_data",
+        help="directory containing gel geometry"
     )
     parser.add_argument(
         "-f",
         metavar="FORMULATION",
-        default="beta"
+        default="beta",
+        help="form of strain energy density"
     )
     parser.add_argument(
         "-k",
         type=float,
         metavar="MODULUS_RATIO",
-        default=1
+        default=1,
+        help="D1/C1 ratio"
     )
     parser.add_argument(
         "-b",
         nargs=2,
         type=float,
         metavar="BOUNDS",
-        default=[-2.0, 20.0]
+        default=[-2.0, 20.0],
+        help="bounds for inverse model, or built-in for some formulations"
     )
     parser.add_argument(
         "-l",
         type=int,
         metavar="LOAD_STEPS",
-        default=1
+        default=1,
+        help="forward model BC load step count"
     )
     parser.add_argument(
         "-p",
         type=str,
         metavar="PRECONDITIONER",
-        default="hypre_amg"
+        default="hypre_amg",
+        help="preconditioner for forward model Newton-Raphson linear solves"
     )
     parser.add_argument(
         "--bci",
         type=str,
         metavar="CELL_SURF_MESH",
-        default=None
+        default=None,
+        help="filename of meshio-compatible mesh with cell surface nodes and u"
     )
     parser.add_argument(
         "--bco",
         type=str,
         metavar="OUTER_SURF_MESH",
-        default=None
+        default=None,
+        help="filename of meshio-compatible mesh with outer nodes and u"
     )
 
     return parser
