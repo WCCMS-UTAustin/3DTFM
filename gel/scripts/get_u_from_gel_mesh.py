@@ -1,4 +1,10 @@
-#!/usr/bin/env python3
+"""Interfaces with fmtrack GPR-interpolation to obtain target displacements.
+
+An FM-TRACK conda environment must be available on the system with the
+name "fmtrack". Will use a GPR model saved to a directory with a
+specific format readable by a subprocess that invokes
+`get_displacements_from_gpr.py`.
+"""
 from dolfin import *
 import argparse
 import os
@@ -12,6 +18,16 @@ def get_exp_u_xdmf(
         gpr_dir,
         outfile
     ):
+    """Creates subprocess to perform GPR-interpolation on the mesh.
+
+    * `cell_data_dir`: str path to directory with information needed
+    to create `gel.geometry.Geometry`
+    * `gpr_dir`: str path to directory with GPR model files
+    * `outfile`: str path to .xdmf file that will contain full-shape
+    experimental, target displacements "u"
+
+    Side-effects: writes new file `outfile`
+    """
     # Gel Volume Mesh
     mesh = Mesh()
     with XDMFFile(
@@ -72,7 +88,10 @@ def get_exp_u_xdmf(
 
 
 def get_u_main():
-    parser = argparse.ArgumentParser(
+    """The function invoked by the command. Parses arguments and passes
+    to `get_exp_u_xdmf`.
+    """
+    parser = get_common_parser(
         description="Interface for cross-conda-environment "
         "communication between newestfenics and fmtrack in order to "
         "create a full-shape .xmdf 1st order Lagrange representation "

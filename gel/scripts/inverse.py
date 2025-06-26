@@ -1,21 +1,31 @@
-#!/usr/bin/env python3
-"""
-inverse.py -c CELL_DATA ... -f FORMULATION ... -k MODULUS_RATIO ...
-             -t TARGET_U_XDMF ... -g GAMMA ... -b LOWER_BOUND UPPER_BOUND [-u]
-             -r RESULTS_DIR --alpha-unity-bc
+"""The inverse model.
 
-RECOMMENDED:
-    inverse.py ... | tee -a out.txt
+# RECOMMENDED USAGE
+    nohup inverse ... | tee -a out.txt &
 
-Given various formulations, values of D1/C1, an XDMF with full shape
-functions for displacement to target with inverse model, etc., runs
-an inverse model for each combination (Cartesian product style)
-and outputs mesh results in the results/ directory.
+This will allow it to continue in the background even if the terminal
+session dies but the user session remains. Also will log error messages
+that may be hard-coded to stdout by FEniCS.
 
-Also logs what it is doing in global_log.txt
+# Side-Effects
 
-The mod_repr field predicted can be found in the xdmf files it creates in
-subdirectories of results/
+Will interact with local file system when run as a command. This
+includes:
+* Logs what it is doing in file specified by name `LOG_FILE`
+* Uses a directory `results_dir` as a super-directory for all inverse
+model results. This directory should be clear of subdirectories except
+for those created by **specifically this program**.
+* Creates a .csv file `inverse.csv` under `results_dir` to store a chart
+of all options used and some result info like runtime and quantites
+for L-curve analysis.
+* Creates a subdirectory under `results_dir` according to the options
+provided.
+* In that subdirectory, stores many .xdmf files with results and
+other information.
+* If a subdirectory for a collection of settings already exists, will
+not proceed forward and quietly skip.
+
+# API
 """
 from gel import *
 import numpy as np
@@ -26,6 +36,7 @@ import moola
 
 
 INTERM_SAVE_PERIOD = 10
+"""Write current guess to filesytem every (this many) L-BFGS iterations"""
 
 
 #############################################################################
@@ -41,7 +52,7 @@ parameters['form_compiler']['quadrature_degree'] = 3
 LOG_FILE = "global_log.txt"
 
 
-def expand_obj_info(exp_info):
+def _expand_obj_info(exp_info):
     obj_info = exp_info[5]
     new_exp_info = (
         *exp_info[:5],
@@ -89,9 +100,20 @@ INVERSE_EXPERIMENT_COLS = [
     "reg",
     "time"
 ]
+"""Names of columns in `inverse.csv`"""
 
 
 def main(args):
+    """Sets up logging to relevant files and starts the inverse model.
+
+    * `args`: `argparse.Namespace` with parsed command arguments
+
+    Side-effects: see intro to `gel.scripts.inverse`; does all the file
+    handling except the experiment's subdirectory
+
+    Computation: calls `gel_inverse`, which handles the experiment's
+    subdirectory.
+    """
     logger = get_global_logger(LOG_FILE)
 
     # Results
@@ -130,7 +152,7 @@ def main(args):
             total_time, pure_obj, reg = gel_inverse(*exp_info)
 
             # Update DataFrame
-            exp_info = expand_obj_info(exp_info)
+            exp_info = _expand_obj_info(exp_info)
             csv.add_row(list(exp_info) + [
                 "Converged",
                 pure_obj,
@@ -144,7 +166,7 @@ def main(args):
             logger.info(e)
 
             # Update DataFrame
-            exp_info = expand_obj_info(exp_info)
+            exp_info = _expand_obj_info(exp_info)
             csv.add_row(list(exp_info) + ["Crash", "", "", ""])
 
         # Save into file
@@ -161,6 +183,7 @@ def main(args):
 
 
 class UnsupportedGeometryError(Exception):
+    """Raised if `cell_data_dir` doesn't have a supported type."""
     pass
 
 
@@ -184,6 +207,53 @@ def gel_inverse(
         bci=None,
         bco=None
     ):
+    r"""Runs the inverse model, writes subdirectory and logs progress.
+
+    * `results_dir`: str path to directory to put all results
+    * `cell_data_dir`: str path to directory with geometry information
+    to use, see the constructor to `gel.geometry.Geometry` for required
+    files
+    * `target_file`: str path to full-shape .xdmf file with
+    displacements in "u"
+    * `formulation`: str a valid material model formulation, see
+    `gel.mechanics` for options
+    * `k`: float $\frac{D_1}{c_1}$ ratio
+    * `objective_info`: `gel.objective.ObjectiveInfo` with information
+    on the objective to be minimized
+    * `lower_bound`: float; either the lower bound for the "beta_tilde"
+    formulation described in `gel.mechanics` or the lower bound for
+    L-BFGS-B if the "scipy" backend if selected
+    * `upper_bound`: float; either the upper bound for the "beta_tilde"
+    formulation described in `gel.mechanics` or the upper bound for
+    L-BFGS-B if the "scipy" backend if selected
+    * `tol`: float tolerance for inverse model convergence
+    * `mod_repr_init`: str a valid modulus representation for the
+    initial guess, see `gel.mechanics` for options
+    * `debug`: bool, if True runs a Taylor test and outputs a tree of
+    the traced components of the simulation in file "graph.dot" in the
+    experiment's subdirectory
+    * `maxiter`: int maximum number of L-BFGS iterations
+    * `restrict_ctl_dofs_to_veh`: bool, it True will only control DoFs
+    in the volume within the event horizon with cutoff specified in
+    `objective_info`
+    * `preconditioner`: str preconditioner to use, see
+    `gel.gel.ForwardSimulation` for more details
+    * `optimizer_backend`: str moola for L-BFGS and that library,
+    otherwise scipy for L-BFGS-B and that library
+    * `bci`: str path to .vtk file with inner BC info, see
+    `gel.geometry.Geometry` for details
+    * `bco`: str path to .vtk file with outer BC info, see
+    `gel.geometry.Geometry` for details
+
+    Side-effects: writes many files in new subdirectory to
+    `results_dir`, see intro to `gel.scripts.inverse`
+
+    Returns:
+    * float time it took to run
+    * float objective functional value $O$ at end (see `gel.objective`)
+    * float regularization functional value $R$ at end (see
+    `gel.objective`)
+    """
     # Input validation
     validate_formulation(formulation)
     validate_mod_repr_field(mod_repr_init)
@@ -267,7 +337,7 @@ def gel_inverse(
     sim = ForwardSimulation(
         geo_type,
         k,
-        material_model=formulation,
+        formulation=formulation,
         mod_repr_init=mod_repr_init,
         load_steps=load_steps,
         vprint=logger.info,
@@ -279,7 +349,7 @@ def gel_inverse(
     )
 
     sim.run_forward()
-    kinematics, mod_repr, resolve = sim.kinematics, sim.mod_repr, sim.solver_fn
+    kinematics, mod_repr = sim.kinematics, sim.mod_repr # Pointers
 
     #####################
     # Must deal with intercepted block
@@ -428,7 +498,7 @@ def gel_inverse(
     logger.info(f"Running forward model with optimal mod_repr field...")
 
     # Run forward model with modified mod_repr
-    resolve()
+    sim.run_forward()
     logger.info(f"Finished. Saving...")
 
     # Compute QoIs
@@ -474,6 +544,9 @@ def gel_inverse(
 
 
 def inverse():
+    """The function invoked by the command. Parses arguments and passes
+    to `main`.
+    """
     parser = get_common_parser(
         description="One stage of the inverse model to determine modulus from "
         "displacements"

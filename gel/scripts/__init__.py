@@ -1,3 +1,13 @@
+"""All the functions associated with commands.
+
+Command names and corresponding source files:
+* forward: `gel.scripts.forward`
+* inverse: `gel.scripts.inverse`
+* downsample_mesh: `gel.scripts.downsample_mesh`
+* get_u: `gel.scripts.get_u_from_gel_mesh`
+* get_kinematics_mesh: `gel.scripts.full_shape_to_nodal`
+* get_veh: `gel.scripts.get_veh`
+"""
 from .forward import forward
 from .inverse import inverse
 from .downsample_mesh import downsample_mesh_main

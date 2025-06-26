@@ -1,15 +1,20 @@
-#!/usr/bin/env python3
-"""
-forward_mesh_output.py -f FORMULATION ... -i I1_VERSION ... -a ALPHA_FIELD ...
-                    -k K ... -r RESULTS_DIR -c CELL_DATA ...
+"""The forward model.
 
-Given various formulations, i1 variations, mod_repr field types, values of k, etc
-runs a forward model for each combination (Cartesian product style)
-and outputs mesh results in a results directory.
+For all arguments, run `forward --help`
 
-For cell data, if given the name of a directory, will read in geometry.
-
-Also logs what it is doing in log.txt
+Will interact with local file system when run as a command. This
+includes:
+* Logs what it is doing in file specified by name `LOG_FILE`
+* Uses a directory `results_dir` as a super-directory for all forward
+model results. This directory should be clear of subdirectories except
+for those created by **specifically this program**.
+* Creates a .csv file `table.csv` under `results_dir` to store a chart
+of all options used and some result info like runtime.
+* Creates a subdirectory under `results_dir` according to the options
+provided.
+* In that subdirectory, stores many .xdmf files.
+* If a subdirectory for a collection of settings already exists, will
+not proceed forward and quietly skip.
 """
 from gel import *
 import os
@@ -36,9 +41,20 @@ FORWARD_EXP_COLS = [
     "Outer Mesh",
     "time"
 ]
+"""Names of columns in `table.csv`"""
 
 
 def run_experiments(args):
+    """Sets up logging to relevant files and starts the forward model.
+
+    * `args`: `argparse.Namespace` with parsed command arguments
+
+    Side-effects: see intro to `gel.scripts.forward`; does all the file
+    handling except the experiment's subdirectory
+
+    Computation: calls `output_single_forward_result`, which handles
+    the experiment's subdirectory.
+    """
     logger = get_global_logger(LOG_FILE)
 
     # Results
@@ -95,18 +111,37 @@ def output_single_forward_result(
         bci,
         bco
     ):
-    """
-    Runs a single experiment with:
-    results_dir : directory with all results
-    cell_data_dir : the cell/gel information to use
-    formulation : a valid formulation
-    mod_repr : a valid mod_repr field variant
-    k : float - target ratio
-    pc : str - preconditioner
-    pc : str - traction
+    r"""Runs a single forward model experiment, writes subdirectory and
+    logs progress.
 
-    Returns:
-    time_taken
+    * `results_dir`: str path to directory to put all results
+    * `cell_data_dir`: str path to directory with geometry information
+    to use, see the constructor to `gel.geometry.Geometry` for required
+    files
+    * `formulation`: str a valid material model formulation, see
+    `gel.mechanics` for options
+    * `mod_repr`: str a valid modulus representation, see
+    `gel.mechanics` for options
+    * `k`: float $\frac{D_1}{c_1}$ ratio
+    * `pc`: str preconditioner to use, see `gel.gel.ForwardSimulation`
+    for more details
+    * `tola`: float the absolute tolerance for Newton-Raphson
+    * `tolr`: float the relative tolerance for Newton-Raphson
+    * `traction`: str filename to traction if using, see
+    `gel.gel.ForwardSimulation` for details
+    * `lower_bound`: float the lower bound for the "beta_tilde"
+    formulation described in `gel.mechanics`
+    * `upper_bound`: float the upper bound for the "beta_tilde"
+    formulation described in `gel.mechanics`
+    * `bci`: str path to .vtk file with inner BC info, see
+    `gel.geometry.Geometry` for details
+    * `bco`: str path to .vtk file with outer BC info, see
+    `gel.geometry.Geometry` for details
+
+    Side-effects: writes many files in new subdirectory to
+    `results_dir`, see intro to `gel.scripts.forward`
+
+    Returns: float time it took to run
     """
     # Input validation
     validate_formulation(formulation)
@@ -163,7 +198,7 @@ def output_single_forward_result(
     sim = ForwardSimulation(
         "real_cell_gel",
         k,
-        material_model=formulation,
+        formulation=formulation,
         mod_repr_init=mod_repr,
         vprint=logger.info,
         data_directory=cell_data_dir,
@@ -196,6 +231,9 @@ def output_single_forward_result(
 
 
 def forward():
+    """The function invoked by the command. Parses arguments and passes
+    to `run_experiments`.
+    """
     parser = get_common_parser(
         description="Run the forward model for ground-truth"
         " simulations of test problems"

@@ -1,10 +1,18 @@
-#!/usr/bin/env python3
+"""Downsamples .stl file with `pymeshlab`"""
 import argparse
 import os
 import pymeshlab
 
 
 def downsample_mesh(num_faces,filename,outputname):
+    """Reads fine-resolution file, writes coarse-resolution file.
+
+    * `num_faces`: int number of target faces for downsampled mesh
+    * `filename`: str path to fine-resolution .stl mesh
+    * `outputname`: str path to coarse-resolution .stl mesh to create
+
+    Side-effects: writes the new file
+    """
     ms = pymeshlab.MeshSet()
     ms.load_new_mesh(filename)
 
@@ -26,6 +34,9 @@ def downsample_mesh(num_faces,filename,outputname):
 
 
 def downsample_mesh_main():
+    """The function invoked by the command. Parses arguments and passes
+    to `downsample_mesh`.
+    """
     parser = argparse.ArgumentParser(
         description="Interface to pymeshlab quadratic edge collapse for"
         " FEniCS environment usage"

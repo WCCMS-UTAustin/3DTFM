@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+r"""Implementation of `get_kinematics_mesh` command for $J$ postpro.
+"""
 import argparse
 import os
 os.environ["SUPPRESS_ADJOINT"] = "1"
@@ -6,6 +7,23 @@ from gel import *
 
 
 def main(cell_data, input_full_shape, output_nodal):
+    r"""Writes .xdmf with element-wise kinematics information.
+
+    * `cell_data`: str path to directory with files needed by
+    `gel.geometry.Geometry`
+    * `input_full_shape`: str path to full-shape .xdmf file with
+    displacements "u"
+    * `output_nodal`: str path to .xdmf file (ending in that extension)
+    that will be created
+
+    Side-effects: writes `output_nodal` .xdmf and .h5 versions with
+    kinematic information:
+    * "u": $\mathbf{u}$
+    * "J": $J$
+    * "CC": $\mathbf{C}:\mathbf{C}$
+    * "w2": $\mathbf{C}:\mathbf{C}-2\text{tr}\mathbf{C}+3$
+    * "w3": $3\mathbf{C}:\mathbf{C}-\left(\text{tr}\mathbf{C}\right)^2$
+    """
     geo = Geometry(cell_data)
     kinematics = kinematics_from_file(geo, input_full_shape)
 
@@ -42,6 +60,9 @@ def main(cell_data, input_full_shape, output_nodal):
 
 
 def get_kinematics_mesh():
+    """The function invoked by the command. Parses arguments and passes
+    to `main`.
+    """
     parser = argparse.ArgumentParser(
         description="Convert a full-shape .xdmf file with displacements"
         " to a nodal .xdmf file for both visualization and computing J"

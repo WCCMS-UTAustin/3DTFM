@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Within the FM-TRACK environment, perform GPR-interpolation with text
+input and output."""
 import argparse
 import numpy as np
 import os

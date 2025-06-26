@@ -1,24 +1,39 @@
-#!/usr/bin/env python3
+"""Creates mesh with indications of which elements are in event horizon"""
 import argparse
 import os
 os.environ["SUPPRESS_ADJOINT"] = "1"
 from gel import *
 
 
-def get_veh(cell_data_dir, u_exp_file, directory, cutoff=0.5):
+def get_veh(cell_data_dir, u_exp_file, directory, cutoff=0.38):
+    """Creates .pvd (and support files) with event horizon indication.
+
+    * `cell_data_dir`: str path to directory with files needed by
+    `gel.geometry.Geometry`
+    * `u_exp_file`: str path to full-shape .xdmf file with displacements
+    "u" to use in determining event horizon
+    * `directory`: str path to directory within which to create new
+    files
+    * `cutoff`: float displacement magnitude in microns to use as event
+    horizon cutoff value
+
+    Side-effects: creates "u_regions_{cutoff}.pvd" and support files
+    with element-wise data having event horizon tags from
+    `gel.geometry.Geometry`
+    """
     geo = Geometry(
         cell_data_dir,
         u_magnitude_subdomains_file=u_exp_file,
         detectable_u_cutoff=cutoff
     )
-    if cutoff == 0.5:
-        filename = os.path.join(directory, "u_regions.pvd")
-    else:
-        filename = os.path.join(directory, f"u_regions_{cutoff}.pvd")
+    filename = os.path.join(directory, f"u_regions_{cutoff}.pvd")
     File(filename) << geo.dx.subdomain_data()
 
 
 def get_veh_main():
+    """The function invoked by the command. Parses arguments and passes
+    to `get_veh`.
+    """
     parser = argparse.ArgumentParser(
         description="Obtain a mesh indicating which cells are counted"
         " as being within the event horizon for visualization."
