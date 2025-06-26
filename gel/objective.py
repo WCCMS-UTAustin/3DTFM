@@ -1,17 +1,148 @@
+r"""Definitions, specifications of objectives for inverse optimization
+
+The full functional to be minimized, $\Phi$, is assembled by a matching
+term $O$ (for "objective") and a regularization term $R$ by
+$$\Phi=O+\gamma R$$
+where $\gamma$ is the (current) regularization parameter.
+
+The specifics are described by str arguments to functions like
+`get_objective_forms` and, principally, the object `ObjectiveInfo` for
+a more convenient interface.
+
+# Objective Functionals $O$
+
+Note that a weight $w(\mathbf{x}_0)$ may be multiplied to the integrands of
+these options if a `u_weight_filename` is provided.
+
+## "u_metric"
+
+$$\int_{\Omega_{domain}}\|\mathbf{u}_{tar}-\mathbf{u}_{sim}\|_{\ell^2}^2\,d\Omega$$
+
+## "c_metric"
+
+$$\int_{\Omega_{domain}}\left(\mathbf{C}_{tar}-\mathbf{C}_{sim}\right):\left(\mathbf{C}_{tar}-\mathbf{C}_{sim}\right)\,d\Omega$$
+
+## "c_metric_easy_weight"
+
+$$\int_{\Omega_{domain}}\left(\mathbf{C}_{tar}:\mathbf{C}_{tar}\right)\left(\mathbf{C}_{tar}-\mathbf{C}_{sim}\right):\left(\mathbf{C}_{tar}-\mathbf{C}_{sim}\right)\,d\Omega$$
+
+## "c_metric_u_weight"
+
+$$\int_{\Omega_{domain}}\|\mathbf{u}_{tar}\|_{\ell^2}^2\left(\mathbf{C}_{tar}-\mathbf{C}_{sim}\right):\left(\mathbf{C}_{tar}-\mathbf{C}_{sim}\right)\,d\Omega$$
+
+## "e_metric"
+
+$$\int_{\Omega_{domain}}\left(\mathbf{C}_{tar}-\mathbf{C}_{sim}-\mathbf{I}\right):\left(\mathbf{C}_{tar}-\mathbf{C}_{sim}-\mathbf{I}\right)\,d\Omega$$
+
+## "inv_metric"
+
+$$\int_{\Omega_{domain}}\left(\mathbf{C}_{sim}^{-1}\mathbf{C}_{tar}-\mathbf{I}\right):\left(\mathbf{C}_{sim}^{-1}\mathbf{C}_{tar}-\mathbf{I}\right)\,d\Omega$$
+
+## "rel_metric"
+
+$$\int_{\Omega_{domain}}\text{tr}\left[\mathbf{C}_{sim}\left(\mathbf{C}_{sim}\mathbf{C}_{tar}^{-1}-2\mathbf{I}\right)\mathbf{C}_{tar}^{-1}+\mathbf{I}\right]\,d\Omega$$
+
+## "c_bar_metric"
+
+Define a helper tensor $\mathbf{\Xi}$ by
+
+$$\mathbf{\Xi}=\begin{cases}
+    J_{sim}^{-\frac{2}{3}}\mathbf{C}_{sim} - J_{tar}^{-\frac{2}{3}}\mathbf{C}_{tar} & \text{if }J_{tar}>0.5 \newline
+    \mathbf{0} & \text{otherwise}
+\end{cases}$$
+
+Then, the objective is
+
+$$\int_{\Omega_{domain}}\mathbf{\Xi}:\mathbf{\Xi}\,d\Omega$$
+
+# Regularization Functionals $R$
+
+Note that a weight $w(\mathbf{x}_0)$ may be multiplied to the integrands of
+these options if an `u_weight_filename` is provided
+**and** `apply_u_weight_to_reg` is enabled.
+
+Without loss of generality as to what modulus representation one is
+using (see `gel.mechanics`, *i.e.* $\alpha$ vs $\beta$), let the control
+variable be denoted $m$.
+
+## "tikhonov"
+
+$$\int_{\Omega_{domain}}\nabla m\cdot\nabla m\,d\Omega$$
+
+## "no_regularization"
+
+$$0$$
+
+## "tv"
+
+Where $\epsilon$ is a numerical stabilization parameter defined in
+`TV_EPS`,
+
+$$\int_{\Omega_{domain}}\sqrt{\nabla m\cdot\nabla m+\epsilon}\,d\Omega$$
+
+## "tv_log"
+
+$$\int_{\Omega_{domain}}\frac{\sqrt{\nabla m\cdot\nabla m+\epsilon}}{m}\,d\Omega$$
+
+## "tikhonov_h1_metric"
+
+$$\int_{\Omega_{domain}}m^2+\nabla m\cdot\nabla m\,d\Omega$$
+
+## "tikhonov_log"
+
+$$\int_{\Omega_{domain}}\frac{\nabla m}{m}\cdot\frac{\nabla m}{m}\,d\Omega$$
+
+## "tikhonov_full_h1_log"
+
+$$\int_{\Omega_{domain}}\ln{\left(m\right)}^2+\frac{\nabla m}{m}\cdot\frac{\nabla m}{m}\,d\Omega$$
+
+# Domain Specifications $\Omega_{domain}$
+
+## "entire_gel"
+
+$\Omega_{domain}$ is the entire hydrogel volume in the underlying
+`gel.geometry.Geometry`
+
+## Volume within the Event Horizon
+
+This specification is a bit more complicated. The string is *prefixed*
+by "exclude_undetectable" in all cases.
+
+When supplied to `ObjectiveInfo`, `get_objective_forms`, or
+`validate_objective`, then immediately affixed, with no spaces between,
+follows a str representation of a float. For instance,
+"exclude_undetectable0.38".
+
+When supplied to `get_objective_forms`, only the "exclude_undetectable"
+part is allowed lest an error be thrown. This is because the float
+inclusion in the latter case is for easy command-line specification of
+the domain. This `get_objective_forms` function, however, is called
+after a `gel.geometry.Geometry` has already been defined with a
+specific cutoff defining the Volume within the Event Horizon tag that
+is used with FEniCS integration.
+
+In any case, this setting uses the Volume within the Event Horizon
+defined by all hydrogel mesh elements having any adjacent node with
+displacement meeting or exceeding the provided float threshold in units
+of microns.
+
+# API
+"""
 from .header import *
 
 
 _EX_UND = "exclude_undetectable"
 OBJECTIVE_TYPES = [
+    "u_metric",
     "c_metric",
     "c_metric_easy_weight",
     "c_metric_u_weight",
     "e_metric",
-    "u_metric",
     "inv_metric",
     "rel_metric",
     "c_bar_metric"
 ]
+"""list of valid objective functional names"""
 REGULARIZATION_TYPES = [
     "tikhonov",
     "no_regularization",
@@ -21,9 +152,12 @@ REGULARIZATION_TYPES = [
     "tikhonov_log",
     "tikhonov_full_h1_log"
 ]
+"""list of valid regularization functional names"""
 DOMAINS = ["entire_gel", _EX_UND]
+"""list of valid domain *prefixes*"""
 
 TV_EPS=1e-8
+"""Numerical stabilization parameter for total variation regularization"""
 
 
 def validate_objective(
@@ -34,6 +168,14 @@ def validate_objective(
         u_weight_filename,
         apply_u_weight_to_reg
     ):
+    """Determines if the provided arguments can be parsed.
+
+    See `get_objective_forms` for input descriptions.
+
+    Note that both cutoff values must match, if both present.
+
+    Raises: `ValueError` if there is an issue parsing
+    """
     # Parse domains, check
     for domain_name, domain in [
         ("objective", objective_domain),
@@ -81,6 +223,16 @@ def validate_objective(
 
 
 def parse_domain(objective_domain, regularization_domain):
+    """Strips float event-horizon cutoff values if applicable
+
+    `objective_domain` and `regularization_domain` as in the arguments
+    to `ObjectiveInfo`
+
+    Returns:
+    * `objective_domain` with cutoff stripped if present
+    * `regularization_domain` with cutoff stripped if present
+    * Event horizon cutoff float if present, otherwise None
+    """
     detectable_u_cutoff = None
 
     od_prefix = objective_domain[:len(_EX_UND)]
@@ -118,10 +270,33 @@ def get_objective_forms(
     ):
     """
     Returns pre-assembled forms that make up objective.
-    reg_form may be None if not using a regularizer with gamma.
+
+    * `geo`: `gel.geometry.Geometry` with which integrals are computed
+    * `objective_type`: str specification (see `gel.objective`)
+    * `regularization_type`: str specification (see `gel.objective`)
+    * `objective_domain`: str stripped specification
+    (see `gel.objective`)
+    * `regularization_domain`: str stripped specification
+    (see `gel.objective`)
+    * `kinematics_target`: `gel.kinematics.Kinematics` with tar
+    kinematic quantities involved in objective functional definitions
+    * `kinematics_sim`: `gel.kinematics.Kinematics` with sim kinematic
+    quantities involved in objective functional definitions
+    * `mod_repr`: FEniCS function, denoted $m$ in `gel.objective`, that
+    encodes modulus/the control variable for modulus
+    * `gamma`: float (current) regularization parameter
+    * `logger`: `logging.Logger` instance with which to call `info`
+    functions with information about what is being used
+    * `u_weight_filename`: str path to full-shape .xdmf file with
+    scalar function "w" to be multiplied to integrand in the case
+    where "u_metric" is `objective_type"
+    * `apply_u_weight_to_reg`: bool enables also multiplying above to
+    regularization-term integrand
 
     Returns:
-    entire_obj_form, pure_obj_form, reg_form
+    * FEniCS form of entire functional $\Phi$ to be minimized
+    * FEniCS form of the objective/matching term $O$
+    * FEniCS form of the regulariztion term $R$, or None if not using
     """
     # Deal with debug output
     if logger is not None:
@@ -286,6 +461,14 @@ def get_objective_forms(
 
 
 def add_objective_arguments(parser):
+    """Adds entries to `argparse.ArgumentParser` for `ObjectiveInfo`
+
+    * `parser`: `argparse.ArgumentParser` to which command-line
+    arguments are added that will be recognized by `ObjectiveInfo`
+
+    Side-effects: arguments added to `parser`, see `ObjectiveInfo`
+    attributes for specifics
+    """
     parser.add_argument(
         "-g",
         type=float,
@@ -336,15 +519,30 @@ def add_objective_arguments(parser):
 
 
 class ObjectiveInfo:
+    """Stores objective specification and provides access to functionals"""
 
     def __init__(self, args):
+        """An object for easy objective description from command line.
+
+        * `args`: `argparse.Namespace` from parsed command-line
+        arguments, specifically those added using `parse_domain`
+        """
         self.gamma_num = args.g
+        """float regularization parameter from `-g GAMMA`"""
         self.objective_type = args.ot
+        """str objective specification from `--ot OBJECTIVE_TYPE`"""
         self.regularization_type = args.rt
+        """str regularization specification from `--rt REGULARIZATION_TYPE`"""
         self.objective_domain = args.od
+        """str stripped objective domain from `--od OBJECTIVE_DOMAIN`"""
         self.regularization_domain = args.rd
+        """str stripped regularization domain from
+        `--rd REGULARIZATION_DOMAIN`
+        """
         self.u_weight_filename = args.u_weight
+        """str filepath from `--u-weight WEIGHT_FILE`"""
         self.apply_u_weight_to_reg = args.apply_u_weight_to_reg
+        """bool enabled by `--apply-u-weight-to-reg`"""
 
         validate_objective(
             self.objective_type,
@@ -367,8 +565,10 @@ class ObjectiveInfo:
         self.objective_domain = parsed[0]
         self.regularization_domain = parsed[1]
         self.detectable_u_cutoff = parsed[2]
+        """float event horizon cutoff value in microns"""
 
         self.gamma = Constant(self.gamma_num)
+        """FEniCS Constant with specified $\gamma$ value"""
 
     def __str__(self):
         items = [
@@ -387,6 +587,7 @@ class ObjectiveInfo:
         return str(self)
 
     def log_info(self, logger):
+        """Calls info attribute of `logger` with info on settings."""
         logger.info(f"Using gamma: {self.gamma_num}")
         logger.info(f"Using objective type: {self.objective_type}")
         logger.info(f"Using regularization type: {self.regularization_type}")
@@ -397,11 +598,32 @@ class ObjectiveInfo:
         logger.info(f"Applying u weight to reg?: {self.apply_u_weight_to_reg}")
 
     def safe_u_weight_filename(self):
+        """Returns None if no weight used, else cleansed filename."""
         if self.u_weight_filename is None:
             return None
         return os.path.basename(self.u_weight_filename)
 
     def get_objective_forms(self, geo, kin_tar, kin_sim, mod_repr, logger):
+        r"""Returns components of the objective functional.
+
+        * `geo`: `gel.geometry.Geometry` with which integrals are
+        computed
+        * `kin_tar`: `gel.kinematics.Kinematics` with target kinematic
+        quantities involved in objective functional definitions
+        * `kin_sim`: `gel.kinematics.Kinematics` with simulated
+        kinematic quantities involved in objective functional
+        definitions
+        * `mod_repr`: FEniCS function, denoted $m$ in `gel.objective`,
+        that encodes modulus/the control variable for modulus
+        * `logger`: `logging.Logger` instance with which to call `info`
+        functions with information about what is being used
+
+        Returns:
+        * FEniCS form of entire functional $\Phi$ to be minimized
+        * FEniCS form of the objective/matching term $O$
+        * FEniCS form of the regulariztion term $R$, or None if not
+        using
+        """
         pre_assembly, pure_obj_form, reg_form = get_objective_forms(
             geo,
             self.objective_type,
@@ -425,6 +647,17 @@ def debug_deriv(
     mod_repr,
     logger
 ):
+    """Uses `info` function in `logger` to print Taylor test results.
+
+    * `obj_hat`: `pyadjoint.ReducedFunctional` object to take derivative
+    of
+    * `geo`: `gel.geometry.Geometry` with appropriate function space
+    to add to current point `mod_repr`
+    * `mod_repr`: point at which to compute derivative, compatible with
+    `obj_hat`
+    * `logger`: something implementing an `info` function to print
+    results
+    """
     logger.info(f"A Taylor test...")
 
     h = Function(geo.V0)
