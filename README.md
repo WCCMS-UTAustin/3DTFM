@@ -102,5 +102,5 @@ TODO
 
 Human MVICs were isolated from consented patients undergoing mitral valve replacement by the Columbia Biobank for Translational Science (IRB-AAAR6796). The deidentified MVICs were then shipped to the University of Texas where culturing and imaging occurred (IBC-2023-00293).
 
-This data was used for creating geometry and boundary conditions for the test problem. Relevant test problem data available here: TODO
+This data was used for creating geometry and boundary conditions for the test problem. Relevant test problem data available at Mendeley Data: [10.17632/nmfxvtbrbd.1](https://doi.org/10.17632/nmfxvtbrbd.1)
 
