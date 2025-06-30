@@ -91,10 +91,10 @@ def get_u_main():
     """The function invoked by the command. Parses arguments and passes
     to `get_exp_u_xdmf`.
     """
-    parser = get_common_parser(
+    parser = argparse.ArgumentParser(
         description="Interface for cross-conda-environment "
         "communication between newestfenics and fmtrack in order to "
-        "create a full-shape .xmdf 1st order Lagrange representation "
+        "create a full-shape .xdmf 1st order Lagrange representation "
         "of experimental displacents by means of interpolating the GPR "
         "model. This component is to be run in the newestfenics "
         "environment."
