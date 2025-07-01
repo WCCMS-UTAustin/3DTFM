@@ -94,10 +94,6 @@ This code was built up starting from our previous approach, see the Supplementar
 }
 ```
 
-## License
-
-TODO
-
 ## Data
 
 Human MVICs were isolated from consented patients undergoing mitral valve replacement by the Columbia Biobank for Translational Science (IRB-AAAR6796). The deidentified MVICs were then shipped to the University of Texas where culturing and imaging occurred (IBC-2023-00293).
