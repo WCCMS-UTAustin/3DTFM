@@ -15,20 +15,32 @@ permissions:
 
 jobs:
   # Build the documentation and upload the static HTML files as an artifact.
-  build:
+  build-linux:
     runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+      fail-fast: false
+    defaults:
+      run:
+        shell: bash -el {0}
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
+    - name: Set up Anaconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: newestfenics
+        environment-file: conda_env_no_cuda.yml
+        python-version: 3.9.18
+        auto-activate-base: false
+    - name: Install other dependencies
+      run: |
+        conda install -c bioconda tbb=2020.2
+        pip install git+https://github.com/g-peery/sanity_research_utils.git git+https://github.com/g-peery/moola.git
+        pip install -e .
+        pip install pdoc
 
-      # install all dependencies (including pdoc)
-      - run: |
-          pip install -e .
-          pip install pdoc
       # build your documentation into docs/.
       - run: pdoc gel --math -o docs/
 
