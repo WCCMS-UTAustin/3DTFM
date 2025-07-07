@@ -14,8 +14,7 @@ permissions:
   contents: read
 
 jobs:
-  # Build the documentation and upload the static HTML files as an artifact.
-  build-linux:
+  build:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 5
