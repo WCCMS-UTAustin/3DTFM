@@ -25,7 +25,8 @@ Command names and corresponding source files:
 
 The second way to use this code is as a Python library. This is
 especially useful for post-processing in Jupyter notebooks, of which
-you may find an example in the repository: TODO.
+you may find an
+[example in the repository](https://github.com/WCCMS-UTAustin/3DTFM/blob/main/reproduction/fenics_environment_analysis.ipynb).
 
 As with other FEniCS-based libraries, start with a star-import:
 
