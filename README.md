@@ -4,6 +4,8 @@
 
 A Python FEniCS implementation of our sophisticated approach for inverse modeling of highly spatially-varying modulus in 3D Traction Force Microscopy.
 
+Documentation is available online at [wccms-utaustin.github.io/3DTFM](https://wccms-utaustin.github.io/3DTFM/gel.html).
+
 ## Dependencies
 
 1. Linux
@@ -69,10 +71,20 @@ pdoc gel --math
 
 ## Citing
 
-If you find this method useful for your research, please use the following BibTeX entry:
+If you find this method useful for your research, please use the following BibTeX entry (currently in preprint stage, will update upon full publication):
 
 ```
-TODO
+@article {peery_new_2025,
+	author = {Peery, Gabriel and West, Toni M and Chemuturi, Sanjana S and Pham, Jodie H and Ferrari, Giovanni and Sacks, Michael S},
+	title = {A New Computational Inverse Modeling Approach for Cellular Traction Force Microscopy that Accounts for Hydrogel Compressibility},
+	elocation-id = {2025.07.03.663064},
+	year = {2025},
+	doi = {10.1101/2025.07.03.663064},
+	publisher = {Cold Spring Harbor Laboratory},
+	URL = {https://www.biorxiv.org/content/early/2025/07/07/2025.07.03.663064},
+	eprint = {https://www.biorxiv.org/content/early/2025/07/07/2025.07.03.663064.full.pdf},
+	journal = {bioRxiv}
+}
 ```
 
 ### Previous Approach
