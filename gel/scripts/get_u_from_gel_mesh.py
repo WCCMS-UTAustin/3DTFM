@@ -24,7 +24,8 @@ def get_exp_u_xdmf(
     to create `gel.geometry.Geometry`
     * `gpr_dir`: str path to directory with GPR model files
     * `outfile`: str path to .xdmf file that will contain full-shape
-    experimental, target displacements "u"
+    experimental, target displacements "u". If None, will write to
+    `cell_data_dir` as `u_experiment.xdmf`
 
     Side-effects: writes new file `outfile`
     """

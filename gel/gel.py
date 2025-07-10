@@ -305,7 +305,7 @@ class ForwardSimulation:
                 self.geo,
                 self.ctl,
                 fillval=(
-                    0.0 if (self.mechanics.formulation in ZERO_FIX_F) else 1.0
+                    0.0 if (formulation in ZERO_FIX_F) else 1.0
                 )
             )
         else:
@@ -433,7 +433,7 @@ class ForwardSimulation:
 
             # Be careful of load stepping and adjoint annotation!
             stop_tape = False
-            if i != load_steps-1:
+            if i != self.load_steps-1:
                 stop_tape = True
 
             if stop_tape:
