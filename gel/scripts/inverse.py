@@ -317,7 +317,7 @@ def gel_inverse(
     logger.info(f"Preconditioner: {preconditioner}")
     logger.info(f"Override inner BC: {bci}")
     logger.info(f"Override outer BC: {bco}")
-    logger.info(f"Far field modulus: {mu_ff}")
+    logger.info(f"Far field modulus: {mu}")
     objective_info.log_info(logger)
 
     # RESET TAPE
