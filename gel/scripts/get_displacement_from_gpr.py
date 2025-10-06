@@ -7,6 +7,15 @@ import os
 import pickle
 
 
+def my_optimizer(obj_func, initial_theta, bounds):
+    import scipy
+    opt_res = scipy.optimize.minimize(
+        obj_func, initial_theta, method="L-BFGS-B", jac=True,
+        bounds=bounds, options={"maxiter" : 3, "disp" : True})
+    theta_opt, func_min = opt_res.x, opt_res.fun
+    return theta_opt, func_min
+
+
 _cache = dict()
 def get_predicted_u(gpr_path, vertices):
     # loads GPR models

@@ -95,6 +95,7 @@ INVERSE_EXPERIMENT_COLS = [
     "optimizer_backend",
     "bci",
     "bco",
+    "mu_ff",
     "outcome",
     "pure_obj",
     "reg",
@@ -141,7 +142,8 @@ def main(args):
         args.p,
         args.opt_backend,
         args.bci,
-        args.bco
+        args.bco,
+        args.mu
     )
 
     logger.info(f"Beginning experiment with arguments {exp_info}.")
@@ -205,7 +207,8 @@ def gel_inverse(
         preconditioner="hypre_amg",
         optimizer_backend="scipy",
         bci=None,
-        bco=None
+        bco=None,
+        mu=108.0
     ):
     r"""Runs the inverse model, writes subdirectory and logs progress.
 
@@ -244,6 +247,7 @@ def gel_inverse(
     `gel.geometry.Geometry` for details
     * `bco`: str path to .vtk file with outer BC info, see
     `gel.geometry.Geometry` for details
+    * `mu`: float far-field shear modulus from rheometry
 
     Side-effects: writes many files in new subdirectory to
     `results_dir`, see intro to `gel.scripts.inverse`
@@ -286,7 +290,8 @@ def gel_inverse(
         tol,
         preconditioner,
         bci,
-        bco
+        bco,
+        mu
     )
 
     # Setup logging
@@ -312,6 +317,7 @@ def gel_inverse(
     logger.info(f"Preconditioner: {preconditioner}")
     logger.info(f"Override inner BC: {bci}")
     logger.info(f"Override outer BC: {bco}")
+    logger.info(f"Far field modulus: {mu_ff}")
     objective_info.log_info(logger)
 
     # RESET TAPE
@@ -341,6 +347,7 @@ def gel_inverse(
         mod_repr_init=mod_repr_init,
         load_steps=load_steps,
         vprint=logger.info,
+        mu_ff=mu,
         data_directory=cell_data_dir,
         restrict_ctl_dofs_to_veh=restrict_ctl_dofs_to_veh,
         pc=preconditioner,
@@ -607,6 +614,13 @@ def inverse():
         choices=["scipy", "moola"],
         default="moola",
         help="scipy: bounded, vector repr.; moola: unbounded, L2 repr."
+    )
+    parser.add_argument(
+        "--mu",
+        type=float,
+        metavar="MU_FF",
+        default=108.0,
+        help="far-field shear modulus from rheometry"
     )
 
     args = parser.parse_args()

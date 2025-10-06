@@ -11,8 +11,8 @@ Command names and corresponding source files:
 from .forward import forward
 from .inverse import inverse
 from .downsample_mesh import downsample_mesh_main
-from .get_u_from_gel_mesh import get_u_main
+from .get_u_from_gel_mesh import get_u_main, get_exp_u_xdmf
 from .full_shape_to_nodal import get_kinematics_mesh
-from .get_veh import get_veh_main
+from .get_veh import get_veh_main, get_veh
 from .get_displacement_from_gpr import get_u_from_gpr_main
 

@@ -12,7 +12,8 @@ setup(
             "get_u = gel.scripts:get_u_main",
             "get_kinematics_mesh = gel.scripts:get_kinematics_mesh",
             "get_veh = gel.scripts:get_veh_main",
-            "get_displacement_from_gpr = gel.scripts:get_u_from_gpr_main"
+            "get_displacement_from_gpr = gel.scripts:get_u_from_gpr_main",
+            "create_cell_surf_normals_mesh = gel.scripts:create_cell_surf_normals_mesh_main",
         ]
     }
 )

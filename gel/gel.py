@@ -265,7 +265,8 @@ class ForwardSimulation:
         * `traction`: str or None. If not None, the filename of a
         full-shape .xdmf traction function on the hydrogel mesh. Must
         be in 1st order Lagrange space, will ignore DoFs outside of
-        surface.
+        surface. "zero" will automatically contruct a 0 traction
+        function
         * `formulation_kwargs`: dict of additional kwargs to the
         material model formulation (if applicable) implemented in
         `gel.mechanics`
@@ -331,6 +332,8 @@ class ForwardSimulation:
         self.T = None
         """FEniCS traction force on boundary per area in reference"""
         if traction is None:
+            self.T = Constant((0.0, 0.0, 0.0))
+        elif traction == "zero":
             self.T = Constant((0.0, 0.0, 0.0))
         else:
             self.T = load_shape(self.geo.V, traction, "T")

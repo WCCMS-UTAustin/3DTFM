@@ -272,7 +272,7 @@ def forward():
         default=None,
         help="full-shape .xdmf file with 1st order Lagrange reference tractions"
         " 'T' over the whole gel domain, note that values outside cell surface "
-        "are ignored"
+        "are ignored. 'zero' for automatic 0 traction, but suppress cell BC"
     )
     args = parser.parse_args()
 
