@@ -26,7 +26,6 @@ dependencies:
   - binutils_linux-64=2.40=hbdbef99_2
   - blas=1.0=openblas
   - bleach=4.1.0=pyhd3eb1b0_0
-  - blosc=1.21.5=h0f2a231_0
   - boltons=23.0.0=py39h06a4308_0
   - bottleneck=1.3.7=py39ha9d4c09_0
   - brokenaxes=0.4.2=pyhd8ed1ab_0
@@ -369,7 +368,7 @@ dependencies:
   - six=1.16.0=pyhd3eb1b0_1
   - slepc=3.20.1=real_hac23e11_100
   - slepc4py=3.20.1=real_hab767b8_100
-#  - snappy=1.2.0=hdb0a2a9_1
+  - snappy=1.2.0=hdb0a2a9_1
   - sniffio=1.3.0=py39h06a4308_0
   - soupsieve=2.5=py39h06a4308_0
   - sqlite=3.41.2=h5eee18b_0
