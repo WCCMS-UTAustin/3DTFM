@@ -4,7 +4,8 @@
 Uses Tensorflow (must be installed) to compute nodal normals on cell
 surface mesh, saves in provided directory.
 """
-from tensorflow_graphics.geometry.representation.mesh.normals import vertex_normals
+if "pdoc" not in dir():
+    from tensorflow_graphics.geometry.representation.mesh.normals import vertex_normals
 import argparse
 import os
 import numpy as np
