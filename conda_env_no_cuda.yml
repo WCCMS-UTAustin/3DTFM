@@ -44,8 +44,7 @@ dependencies:
   - charset-normalizer=2.0.4=pyhd3eb1b0_0
   - click=8.1.7=py39h06a4308_0
   - cloudpickle=2.2.1=py39h06a4308_0
-    #- cmake=3.26.4=h96355d8_0
-  - conda-forge::cmake=3.26.4
+  - cmake=3.26.4=h96355d8_0
   - comm=0.1.2=py39h06a4308_0
   - conda=24.1.0=py39h06a4308_0
   - conda-build=24.1.1=py39h06a4308_0
@@ -354,7 +353,6 @@ dependencies:
   - requests=2.31.0=py39h06a4308_1
   - rfc3339-validator=0.1.4=py39h06a4308_0
   - rfc3986-validator=0.1.1=py39h06a4308_0
-  - rhash=1.4.4=hd590300_0
   - rich=13.3.5=py39h06a4308_0
   - rpds-py=0.10.6=py39hb02cf49_0
   - ruamel.yaml=0.17.21=py39h5eee18b_0
