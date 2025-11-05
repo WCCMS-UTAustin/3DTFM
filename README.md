@@ -14,7 +14,7 @@ Documentation is available online at [wccms-utaustin.github.io/3DTFM](https://wc
 ### Optional
 
 1. For computing normal vectors of meshes with Tensorflow: [cuda](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/)
-2. For either processing z-stack images from scratch or preparing inputs to this software: The object-oriented version of [FM-Track](https://github.com/elejeune11/FM-Track/tree/objectoriented)
+2. For either processing z-stack images from scratch or preparing inputs to this software: [Fiji (an ImageJ distribution)](https://github.com/fiji/fiji) and the object-oriented version of [FM-Track](https://github.com/elejeune11/FM-Track/tree/objectoriented)
 
 ## Installation
 
@@ -61,7 +61,7 @@ inverse --help
 
 ### Documentation
 
-Official documentation is available, generated with [pdoc](https://pdoc.dev/).
+Official documentation is available [here](https://wccms-utaustin.github.io/3DTFM/gel.html), generated with [pdoc](https://pdoc.dev/).
 
 To host a local version of documentation:
 
