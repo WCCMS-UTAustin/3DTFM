@@ -9,7 +9,7 @@ import argparse
 import os
 import numpy as np
 import meshio
-from get_displacement_from_gpr import get_predicted_u
+from .get_displacement_from_gpr import get_predicted_u
 
 
 def my_optimizer(obj_func, initial_theta, bounds):
