@@ -237,6 +237,7 @@ class ForwardSimulation:
             tola=1e-10,
             tolr=1e-9,
             traction=None,
+            u_init=None,
             formulation_kwargs=dict(),
             **kwargs
         ):
@@ -267,10 +268,12 @@ class ForwardSimulation:
         be in 1st order Lagrange space, will ignore DoFs outside of
         surface. "zero" will automatically contruct a 0 traction
         function
+        * `u_init`: str path to full-shape .xdmf file with initial
+        displacements
         * `formulation_kwargs`: dict of additional kwargs to the
         material model formulation (if applicable) implemented in
         `gel.mechanics`
-        * `kwargs`: dict of kwargs to the the geometry, for instance
+        * `kwargs`: dict of kwargs to the geometry, for instance
         the arguments to `gel.geometry.Geometry`
         """
         # Validate, get geometry
@@ -285,10 +288,14 @@ class ForwardSimulation:
         """Corresponding object of type `gel.geometry.Geometry`"""
 
         # Initialize displacements, kinematic quantities
-        self.kinematics = Kinematics(self.geo)
+        self.kinematics = None
         """Object of type `gel.kinematics.Kinematics` with displacement
         information
         """
+        if u_init is None:
+            self.kinematics = Kinematics(self.geo)
+        else:
+            self.kinematics = kinematics_from_file(self.geo, u_init)
 
         # Prepare modulus control variable
         self.ctl = create_mod_repr(self.geo, mod_repr_init)

@@ -96,6 +96,7 @@ INVERSE_EXPERIMENT_COLS = [
     "bci",
     "bco",
     "mu_ff",
+    "u_init",
     "outcome",
     "pure_obj",
     "reg",
@@ -143,7 +144,8 @@ def main(args):
         args.opt_backend,
         args.bci,
         args.bco,
-        args.mu
+        args.mu,
+        args.u_init
     )
 
     logger.info(f"Beginning experiment with arguments {exp_info}.")
@@ -208,7 +210,8 @@ def gel_inverse(
         optimizer_backend="scipy",
         bci=None,
         bco=None,
-        mu=108.0
+        mu=108.0,
+        u_init=None
     ):
     r"""Runs the inverse model, writes subdirectory and logs progress.
 
@@ -248,6 +251,8 @@ def gel_inverse(
     * `bco`: str path to .vtk file with outer BC info, see
     `gel.geometry.Geometry` for details
     * `mu`: float far-field shear modulus from rheometry
+    * `u_init`: str path to full-shape .xdmf file with initial
+    displacements
 
     Side-effects: writes many files in new subdirectory to
     `results_dir`, see intro to `gel.scripts.inverse`
@@ -318,6 +323,7 @@ def gel_inverse(
     logger.info(f"Override inner BC: {bci}")
     logger.info(f"Override outer BC: {bco}")
     logger.info(f"Far field modulus: {mu}")
+    logger.info(f"Initial displacements: {u_init}")
     objective_info.log_info(logger)
 
     # RESET TAPE
@@ -351,6 +357,7 @@ def gel_inverse(
         data_directory=cell_data_dir,
         restrict_ctl_dofs_to_veh=restrict_ctl_dofs_to_veh,
         pc=preconditioner,
+        u_init=u_init,
         formulation_kwargs=formulation_kwargs,
         **addn_args
     )

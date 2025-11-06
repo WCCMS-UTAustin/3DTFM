@@ -49,6 +49,7 @@ def get_common_parser(*args, **kwargs):
     -p PRECONDITIONER
     --bci CELL_SURF_MESH
     --bco OUTER_SURF_MESH
+    --u-init U_INIT
     ```
     """
     if "formatter_class" not in kwargs:
@@ -110,6 +111,13 @@ def get_common_parser(*args, **kwargs):
         metavar="OUTER_SURF_MESH",
         default=None,
         help="filename of meshio-compatible mesh with outer nodes and u"
+    )
+    parser.add_argument(
+        "--u-init",
+        type=str,
+        metavar="U_INIT",
+        default=None,
+        help="filename of full-shape .xdmf file with initial displacements"
     )
 
     return parser
