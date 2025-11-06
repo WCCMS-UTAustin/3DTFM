@@ -39,6 +39,7 @@ FORWARD_EXP_COLS = [
     "upper_bound",
     "Inner Mesh",
     "Outer Mesh",
+    "u_init",
     "time"
 ]
 """Names of columns in `table.csv`"""
@@ -77,7 +78,8 @@ def run_experiments(args):
         args.b[0],
         args.b[1],
         args.bci,
-        args.bco
+        args.bco,
+        args.u_init
     )
 
     logger.info(f"Beginning experiment with arguments {exp_info}.")
@@ -109,7 +111,8 @@ def output_single_forward_result(
         lower_bound,
         upper_bound,
         bci,
-        bco
+        bco,
+        u_init
     ):
     r"""Runs a single forward model experiment, writes subdirectory and
     logs progress.
@@ -137,6 +140,8 @@ def output_single_forward_result(
     `gel.geometry.Geometry` for details
     * `bco`: str path to .vtk file with outer BC info, see
     `gel.geometry.Geometry` for details
+    * `u_init`: str path to full-shape .xdmf file with initial
+    displacements
 
     Side-effects: writes many files in new subdirectory to
     `results_dir`, see intro to `gel.scripts.forward`
@@ -163,7 +168,8 @@ def output_single_forward_result(
         lower_bound,
         upper_bound,
         bci,
-        bco
+        bco,
+        u_init
     )
 
     # Setup logging
@@ -183,6 +189,7 @@ def output_single_forward_result(
     logger.info(f"Using load steps: {load_steps}")
     logger.info(f"Override inner BC: {bci}")
     logger.info(f"Override outer BC: {bco}")
+    logger.info(f"Initial displacements: {u_init}")
 
     # Timer start
     timer = ExperimentTimer()
@@ -208,6 +215,7 @@ def output_single_forward_result(
         tola=tola,
         tolr=tolr,
         traction=traction,
+        u_init=u_init,
         formulation_kwargs=formulation_kwargs,
         **addn_args
     )
