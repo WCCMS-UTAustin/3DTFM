@@ -7,6 +7,12 @@ Command names and corresponding source files:
 * get_u: `gel.scripts.get_u_from_gel_mesh`
 * get_kinematics_mesh: `gel.scripts.full_shape_to_nodal`
 * get_veh: `gel.scripts.get_veh`
+* create_cell_surf_normals_mesh: `gel.scripts.create_cell_surf_normals_mesh`
+
+Some scripts in this module are only to be run from the FM-Track
+environment and their usage is specialized. These scripts include:
+* `gel.scripts.get_displacement_from_gpr`
+* `gel.scripts.get_bc_vtks`
 """
 from .forward import forward
 from .inverse import inverse

@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
 """Compute nodal cell surface normals, save as .vtk file
+
+For all arguments, run `create_cell_surf_normals_mesh --help`
 
 Uses Tensorflow (must be installed) to compute nodal normals on cell
 surface mesh, saves in provided directory.

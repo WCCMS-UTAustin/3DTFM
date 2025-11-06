@@ -3,7 +3,9 @@
 
 Must be run in the FM-Track environment. Will use a GPR model saved to
 a directory with a specific format readable by the functions in
-`get_displacements_from_gpr.py`.
+`gel.scripts.get_displacements_from_gpr.py`.
+
+For all arguments, run `./get_bc_vtks.py --help`
 """
 import argparse
 import os
@@ -13,6 +15,7 @@ from .get_displacement_from_gpr import get_predicted_u
 
 
 def my_optimizer(obj_func, initial_theta, bounds):
+    """Function sometimes used for kernel hyperparameter optimization"""
     import scipy
     opt_res = scipy.optimize.minimize(
         obj_func, initial_theta, method="L-BFGS-B", jac=True,

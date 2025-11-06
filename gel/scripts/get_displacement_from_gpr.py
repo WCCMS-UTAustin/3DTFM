@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Within the FM-TRACK environment, perform GPR-interpolation with text
-input and output."""
+input and output.
+
+For all arguments, run `get_displacement_from_gpr --help`
+"""
 import argparse
 import numpy as np
 import os
@@ -8,6 +11,7 @@ import pickle
 
 
 def my_optimizer(obj_func, initial_theta, bounds):
+    """Function sometimes used for kernel hyperparameter optimization"""
     import scipy
     opt_res = scipy.optimize.minimize(
         obj_func, initial_theta, method="L-BFGS-B", jac=True,
@@ -18,6 +22,18 @@ def my_optimizer(obj_func, initial_theta, bounds):
 
 _cache = dict()
 def get_predicted_u(gpr_path, vertices):
+    """Evaluates GPR model from directory.
+
+    * `gpr_path`: str path to directory with files:
+        * gp_U_cleaned.sav: FM-Track GPR model of x1-axis displacements
+        * gp_V_cleaned.sav: FM-Track GPR model of x2-axis displacements
+        * gp_W_cleaned.sav: FM-Track GPR model of x3-axis displacements
+        * scaler_cleaned.sav: FM-Track GPR model pre-process component
+    * `vertices`: (N,3) array of float coordinates in hydrogel
+
+    Returns:
+    * (N,3) array of float displacements at coordinates
+    """
     # loads GPR models
     if gpr_path not in _cache:
         gp_U = pickle.load(open(os.path.join(gpr_path, 'gp_U_cleaned.sav'), 'rb'))
@@ -49,6 +65,9 @@ def get_predicted_u(gpr_path, vertices):
 
 
 def get_u_from_gpr_main():
+    """The function invoked by the command. Parses arguments and passes
+    to `get_predicted_u`.
+    """
     parser = argparse.ArgumentParser(
         description="Evaluate GPR model at provided vertices, for use "
         "in FM-Track environment"

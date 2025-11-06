@@ -20,6 +20,7 @@ Command names and corresponding source files:
 * get_u: `gel.scripts.get_u_from_gel_mesh`
 * get_kinematics_mesh: `gel.scripts.full_shape_to_nodal`
 * get_veh: `gel.scripts.get_veh`
+* create_cell_surf_normals_mesh: `gel.scripts.create_cell_surf_normals_mesh`
 
 # Library Usage
 
