@@ -21,20 +21,13 @@ Documentation is available online at [wccms-utaustin.github.io/3DTFM](https://wc
 While in the repository directory, if have cuda:
 
 ```
-conda env create -f conda_env.yml
-```
-
-Otherwise, (don't have cuda):
-
-```
-conda env create -f conda_env_no_cuda.yml
+conda env create -f tfm.yml
 ```
 
 In any case, afterwards:
 
 ```
-conda activate newestfenics
-conda install -c bioconda tbb=2020.2
+conda activate tfm
 pip install git+https://github.com/g-peery/sanity_research_utils.git git+https://github.com/g-peery/moola.git
 pip install -e .
 ```

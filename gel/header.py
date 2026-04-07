@@ -28,7 +28,7 @@ if "SUPPRESS_ADJOINT" not in os.environ:
     from dolfin_adjoint import *
     import dolfin as df
     # Make previous guesses get passed
-    from fenics_adjoint.solving import SolveBlock
+    from fenics_adjoint.blocks.solving import GenericSolveBlock
     from fenics_adjoint.variational_solver import NonlinearVariationalSolveBlock
 
     NonlinearVariationalSolveBlock._intercepted_solve = NonlinearVariationalSolveBlock._forward_solve
@@ -42,7 +42,7 @@ if "SUPPRESS_ADJOINT" not in os.environ:
 
     NonlinearVariationalSolveBlock._forward_solve = new_forward_solve
 
-    SolveBlock._intercepted_create_initial_guess = SolveBlock._create_initial_guess
+    GenericSolveBlock._intercepted_create_initial_guess = GenericSolveBlock._create_initial_guess
 
     def new_init_guess(self):
         """Wrapper for _create_initial_guess returning saved soln."""
@@ -51,7 +51,7 @@ if "SUPPRESS_ADJOINT" not in os.environ:
         else:
             return self.prev_soln
 
-    SolveBlock._create_initial_guess = new_init_guess
+    GenericSolveBlock._create_initial_guess = new_init_guess
 
 
 import pyadjoint as pa

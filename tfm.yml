@@ -1,0 +1,20 @@
+name: tfm
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - fenics
+  - meshio
+  - pyvista
+  - matplotlib
+  - pygmsh
+  - pip
+  - pymeshlab
+  - jupyterlab
+  - snakemake
+  - scipy
+  - numpy<2.0.0
+  - setuptools<82.0.0
+  - pip:
+    - dolfin-adjoint
