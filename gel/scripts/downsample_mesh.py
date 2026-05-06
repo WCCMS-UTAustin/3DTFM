@@ -42,11 +42,16 @@ def downsample_mesh_main():
         " FEniCS environment usage"
     )
     parser.add_argument(
-        "-d",
+        "-i",
         type=str,
-        metavar="WORKING_DIR",
-        help="directory with input CytoD.stl and for output "
-        "CytoD_downsampled.stl"
+        metavar="INPUT_STL",
+        help="input .stl file"
+    )
+    parser.add_argument(
+        "-o",
+        type=str,
+        metavar="OUTPUT_STL",
+        help="output downsampled .stl file"
     )
     parser.add_argument(
         "-n",
@@ -60,8 +65,8 @@ def downsample_mesh_main():
 
     downsample_mesh(
         args.num_reduced_faces,
-        os.path.join(args.d, "CytoD.stl"),
-        os.path.join(args.d, "CytoD_downsampled.stl")
+        args.i,
+        args.o
     )
 
 
