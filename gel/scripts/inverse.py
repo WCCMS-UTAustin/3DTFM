@@ -146,7 +146,8 @@ def main(args):
         args.bco,
         args.mu,
         args.u_init,
-        args.run_name
+        args.run_name,
+        args.overwrite
     )
 
     logger.info(f"Beginning experiment with arguments {exp_info}.")
@@ -213,7 +214,8 @@ def gel_inverse(
         bco=None,
         mu=108.0,
         u_init=None,
-        run_name=None
+        run_name=None,
+        overwrite=False
     ):
     r"""Runs the inverse model, writes subdirectory and logs progress.
 
@@ -278,7 +280,9 @@ def gel_inverse(
 
     # Output directory handling
     if run_name is not None:
-        output_dir = prepare_experiment_dir(results_dir, run_name)
+        output_dir = prepare_experiment_dir(
+            results_dir, run_name, overwrite=overwrite
+        )
     else:
         output_dir = prepare_experiment_dir(
             results_dir,
@@ -301,7 +305,8 @@ def gel_inverse(
             preconditioner,
             bci,
             bco,
-            mu
+            mu,
+            overwrite=overwrite
         )
 
     # Setup logging
@@ -634,6 +639,11 @@ def inverse():
         default=None,
         help="fixed subdirectory name under -r to hold this run's outputs; "
         "if omitted, a settings-derived name is used"
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="allow overriding an existing experiment directory"
     )
     parser.add_argument(
         "--mu",
