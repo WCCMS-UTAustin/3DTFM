@@ -97,6 +97,7 @@ INVERSE_EXPERIMENT_COLS = [
     "bco",
     "mu_ff",
     "u_init",
+    "run_name",
     "outcome",
     "pure_obj",
     "reg",
