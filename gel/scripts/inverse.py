@@ -147,7 +147,6 @@ def main(args):
         args.mu,
         args.u_init,
         args.run_name,
-        args.overwrite
     )
 
     logger.info(f"Beginning experiment with arguments {exp_info}.")
@@ -155,7 +154,9 @@ def main(args):
     # Be careful of it already existing
     try:
         try:
-            total_time, pure_obj, reg = gel_inverse(*exp_info)
+            total_time, pure_obj, reg = gel_inverse(
+                *exp_info, overwrite=args.overwrite
+            )
 
             # Update DataFrame
             exp_info = _expand_obj_info(exp_info)
