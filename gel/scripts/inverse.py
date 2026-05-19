@@ -145,7 +145,8 @@ def main(args):
         args.bci,
         args.bco,
         args.mu,
-        args.u_init
+        args.u_init,
+        args.run_name
     )
 
     logger.info(f"Beginning experiment with arguments {exp_info}.")
@@ -211,7 +212,8 @@ def gel_inverse(
         bci=None,
         bco=None,
         mu=108.0,
-        u_init=None
+        u_init=None,
+        run_name=None
     ):
     r"""Runs the inverse model, writes subdirectory and logs progress.
 
@@ -275,29 +277,32 @@ def gel_inverse(
         raise UnsupportedGeometryError(f"{geo_type} currently not supported")
 
     # Output directory handling
-    output_dir = prepare_experiment_dir(
-        results_dir,
-        cell_name,
-        formulation,
-        restrict_ctl_dofs_to_veh,
-        mod_repr_init,
-        k,
-        objective_info.gamma_num,
-        objective_info.objective_type,
-        objective_info.regularization_type,
-        objective_info.objective_domain,
-        objective_info.regularization_domain,
-        objective_info.detectable_u_cutoff,
-        objective_info.apply_u_weight_to_reg,
-        objective_info.safe_u_weight_filename(),
-        lower_bound,
-        upper_bound,
-        tol,
-        preconditioner,
-        bci,
-        bco,
-        mu
-    )
+    if run_name is not None:
+        output_dir = prepare_experiment_dir(results_dir, run_name)
+    else:
+        output_dir = prepare_experiment_dir(
+            results_dir,
+            cell_name,
+            formulation,
+            restrict_ctl_dofs_to_veh,
+            mod_repr_init,
+            k,
+            objective_info.gamma_num,
+            objective_info.objective_type,
+            objective_info.regularization_type,
+            objective_info.objective_domain,
+            objective_info.regularization_domain,
+            objective_info.detectable_u_cutoff,
+            objective_info.apply_u_weight_to_reg,
+            objective_info.safe_u_weight_filename(),
+            lower_bound,
+            upper_bound,
+            tol,
+            preconditioner,
+            bci,
+            bco,
+            mu
+        )
 
     # Setup logging
     logger, logger_destructor = create_experiment_logger(output_dir)
@@ -621,6 +626,14 @@ def inverse():
         choices=["scipy", "moola"],
         default="moola",
         help="scipy: bounded, vector repr.; moola: unbounded, L2 repr."
+    )
+    parser.add_argument(
+        "--run-name",
+        type=str,
+        metavar="RUN_NAME",
+        default=None,
+        help="fixed subdirectory name under -r to hold this run's outputs; "
+        "if omitted, a settings-derived name is used"
     )
     parser.add_argument(
         "--mu",
