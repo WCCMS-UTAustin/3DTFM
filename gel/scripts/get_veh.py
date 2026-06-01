@@ -5,7 +5,8 @@ os.environ["SUPPRESS_ADJOINT"] = "1"
 from gel import *
 
 
-def get_veh(cell_data_dir, u_exp_file, directory, cutoff=0.38):
+def get_veh(cell_data_dir, u_exp_file, directory, cutoff=0.38,
+            bci=None, bco=None):
     """Creates .pvd (and support files) with event horizon indication.
 
     * `cell_data_dir`: str path to directory with files needed by
@@ -16,6 +17,9 @@ def get_veh(cell_data_dir, u_exp_file, directory, cutoff=0.38):
     files
     * `cutoff`: float displacement magnitude in microns to use as event
     horizon cutoff value
+    * `bci`: str or None. Override path to the inner cell-surface BC .vtk;
+    when None, `gel.geometry.Geometry` defaults to `cell_data_dir/bci.vtk`
+    * `bco`: str or None. Override path to the outer boundary BC .vtk
 
     Side-effects: creates "u_regions_{cutoff}.pvd" and support files
     with element-wise data having event horizon tags from
@@ -24,7 +28,9 @@ def get_veh(cell_data_dir, u_exp_file, directory, cutoff=0.38):
     geo = Geometry(
         cell_data_dir,
         u_magnitude_subdomains_file=u_exp_file,
-        detectable_u_cutoff=cutoff
+        detectable_u_cutoff=cutoff,
+        bci_data=bci,
+        bco_data=bco
     )
     filename = os.path.join(directory, f"u_regions_{cutoff}.pvd")
     File(filename) << geo.dx.subdomain_data()
@@ -65,9 +71,25 @@ def get_veh_main():
         default=0.38,
         help="threshold by which VEH is determined in microns"
     )
+    parser.add_argument(
+        "--bci",
+        type=str,
+        metavar="CELL_SURF_MESH",
+        default=None,
+        help="override path to inner cell-surface BC .vtk (default: -c dir's "
+        "bci.vtk)"
+    )
+    parser.add_argument(
+        "--bco",
+        type=str,
+        metavar="OUTER_SURF_MESH",
+        default=None,
+        help="override path to outer boundary BC .vtk (default: -c dir's "
+        "bco.vtk)"
+    )
     args = parser.parse_args()
 
-    get_veh(args.c, args.i, args.o, args.t)
+    get_veh(args.c, args.i, args.o, args.t, args.bci, args.bco)
 
 
 if __name__=="__main__":

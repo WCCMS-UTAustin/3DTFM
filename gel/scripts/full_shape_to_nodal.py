@@ -6,7 +6,7 @@ os.environ["SUPPRESS_ADJOINT"] = "1"
 from gel import *
 
 
-def main(cell_data, input_full_shape, output_nodal):
+def main(cell_data, input_full_shape, output_nodal, bci=None, bco=None):
     r"""Writes .xdmf with element-wise kinematics information.
 
     * `cell_data`: str path to directory with files needed by
@@ -15,6 +15,9 @@ def main(cell_data, input_full_shape, output_nodal):
     displacements "u"
     * `output_nodal`: str path to .xdmf file (ending in that extension)
     that will be created
+    * `bci`: str or None. Override path to the inner cell-surface BC .vtk;
+    when None, `gel.geometry.Geometry` defaults to `cell_data/bci.vtk`
+    * `bco`: str or None. Override path to the outer boundary BC .vtk
 
     Side-effects: writes `output_nodal` .xdmf and .h5 versions with
     kinematic information:
@@ -24,7 +27,7 @@ def main(cell_data, input_full_shape, output_nodal):
     * "w2": $\mathbf{C}:\mathbf{C}-2\text{tr}\mathbf{C}+3$
     * "w3": $3\mathbf{C}:\mathbf{C}-\left(\text{tr}\mathbf{C}\right)^2$
     """
-    geo = Geometry(cell_data)
+    geo = Geometry(cell_data, bci_data=bci, bco_data=bco)
     kinematics = kinematics_from_file(geo, input_full_shape)
 
     simulation_output_file = XDMFFile(output_nodal)
@@ -85,9 +88,25 @@ def get_kinematics_mesh():
         metavar="OUTPUT_NODAL",
         help="output .xdmf file with kinematic quantities like J"
     )
+    parser.add_argument(
+        "--bci",
+        type=str,
+        metavar="CELL_SURF_MESH",
+        default=None,
+        help="override path to inner cell-surface BC .vtk (default: -c dir's "
+        "bci.vtk)"
+    )
+    parser.add_argument(
+        "--bco",
+        type=str,
+        metavar="OUTER_SURF_MESH",
+        default=None,
+        help="override path to outer boundary BC .vtk (default: -c dir's "
+        "bco.vtk)"
+    )
     args = parser.parse_args()
 
-    main(args.c, args.i, args.o)
+    main(args.c, args.i, args.o, args.bci, args.bco)
 
 
 if __name__=="__main__":
