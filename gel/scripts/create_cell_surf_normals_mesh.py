@@ -5,9 +5,6 @@ For all arguments, run `create_cell_surf_normals_mesh --help`
 Uses Tensorflow (must be installed) to compute nodal normals on cell
 surface mesh, saves in provided directory.
 """
-import sys
-if "pdoc" not in sys.modules:
-    from tensorflow_graphics.geometry.representation.mesh.normals import vertex_normals
 import argparse
 import os
 import numpy as np
@@ -23,6 +20,11 @@ def create_cell_surf_normals_mesh(cell_mesh_file, dest_dir):
 
     Side-effects: writes `cell_surf_with_normal.vtk` under `dest_dir`
     """
+    # Imported here (not at module level) so that TensorFlow stays an
+    # optional dependency: `gel.scripts` can be imported without it, and
+    # only this command requires it.
+    from tensorflow_graphics.geometry.representation.mesh.normals import vertex_normals
+
     cell_surf_mesh = meshio.read(cell_mesh_file)
     
     cell_vertices = cell_surf_mesh.points
